@@ -1,1 +1,70 @@
 @import "tailwindcss";
+@keyframes press {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.95); }
+  100% { transform: scale(1); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-5px); }
+  40%, 80% { transform: translateX(5px); }
+}
+
+@keyframes fall {
+  0% { transform: translateY(-100px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes flicker {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 0.8; }
+}
+
+@keyframes underline {
+  0% { width: 0; }
+  100% { width: 100%; }
+}
+
+.animate-press {
+  animation: press 0.15s ease;
+}
+
+.animate-shake {
+  animation: shake 0.5s ease;
+}
+
+.animate-fall {
+  animation: fall 0.5s ease forwards;
+}
+
+.animate-flicker {
+  animation: flicker 0.3s ease 2 forwards;
+}
+
+.animate-underline {
+  animation: underline 0.3s ease-out forwards;
+}
+
+.key-btn {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.shadow-key {
+  box-shadow: 0 4px 0 #cbd5e1, 0 5px 5px rgba(0,0,0,0.1);
+}
+
+.shadow-green {
+  box-shadow: 0 4px 0 #15803d, 0 5px 5px rgba(0,0,0,0.1);
+}
+
+.shadow-red {
+  box-shadow: 0 4px 0 #b91c1c, 0 5px 5px rgba(0,0,0,0.1);
+}
