@@ -23,11 +23,7 @@ function App() {
   const wordList = language === 'tr' ? wordsTR : wordsEN;
   const randomWord = wordList[Math.floor(Math.random() * wordList.length)];
   
-  setWord(
-    language === 'tr'
-      ? randomWord.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('tr')
-      : randomWord.toLowerCase()
-  );
+  setWord(randomWord.trim().toUpperCase());
 
   setGuessedLetters([]);
   setWrongGuesses([]);
@@ -35,27 +31,42 @@ function App() {
 };
 
 
-  const handleGuess = (letter) => {
-    if (gameStatus !== 'playing' || guessedLetters.includes(letter) || wrongGuesses.includes(letter)) {
-      return;
-    }
+const handleGuess = (letter) => {
+  const guessedLetter = language === 'tr' 
+    ? letter.toLocaleUpperCase('tr-TR') 
+    : letter.toUpperCase();
 
-    if (word.includes(letter)) {
-      const newGuessedLetters = [...guessedLetters, letter];
-      setGuessedLetters(newGuessedLetters);
-      
-      if (word.split('').every(l => newGuessedLetters.includes(l))) {
-        setGameStatus('won');
-      }
-    } else {
-      const newWrongGuesses = [...wrongGuesses, letter];
-      setWrongGuesses(newWrongGuesses);
-      
-      if (newWrongGuesses.length >= maxAttempts) {
-        setGameStatus('lost');
-      }
+  if (
+    gameStatus !== 'playing' ||
+    guessedLetters.includes(guessedLetter) ||
+    wrongGuesses.includes(guessedLetter)
+  ) {
+    return;
+  }
+
+  // Word zaten büyük harf olduğu için direkt karşılaştırma yapabiliriz
+  if (word.includes(guessedLetter)) {
+    const newGuessedLetters = [...guessedLetters, guessedLetter];
+    setGuessedLetters(newGuessedLetters);
+
+    // Tüm harfler tahmin edildi mi kontrolü
+    const allLettersGuessed = word.split('').every(l => 
+      newGuessedLetters.includes(l)
+    );
+    
+    if (allLettersGuessed) {
+      setGameStatus('won');
     }
-  };
+  } else {
+    const newWrongGuesses = [...wrongGuesses, guessedLetter];
+    setWrongGuesses(newWrongGuesses);
+
+    if (newWrongGuesses.length >= maxAttempts) {
+      setGameStatus('lost');
+    }
+  }
+};
+
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-purple-50 flex flex-col items-center gap-6 p-6">
@@ -78,6 +89,7 @@ function App() {
               word={word} 
               guessedLetters={guessedLetters} 
               gameStatus={gameStatus}
+              language={language}
             />
           </div>
 

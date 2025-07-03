@@ -55,8 +55,8 @@ const HangmanCanvas = ({ wrongGuessCount, gameStatus }) => {
 
       {gameStatus === 'lost' && (
         <>
-          <div className="absolute top-17 left-32 -translate-x-1/2 text-4xl opacity-0  animate-fall">
-            💀
+          <div className="absolute top-17 left-33 -translate-x-1/2 text-xl opacity-0  animate-fall">
+            x x
           </div>
           <div className="absolute top-0 left-0 w-full h-full flex justify-center items-center opacity-0 animate-flicker">
             <div className="text-9xl">☠️</div>

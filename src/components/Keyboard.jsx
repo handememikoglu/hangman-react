@@ -1,14 +1,10 @@
 const Keyboard = ({ onGuess, guessed, wrong, disabled, language }) => {
   const letters = language === 'tr' 
-    ? "ABCÇDEFGĞHIİJKLMNOÖPQRSŞTUÜVWXYZ".split("") 
-    : "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+    ? "A B C Ç D E F G Ğ H I İ J K L M N O Ö P Q R S Ş T U Ü V W X Y Z".split(" ") 
+    : "A B C D E F G H I J K L M N O P Q R S T U V W X Y Z".split(" ");
 
   const handleClick = (letter) => {
-    // Convert based on language
-    const guessedLetter = language === 'tr' 
-      ? letter.toLocaleLowerCase('tr-TR') 
-      : letter.toLowerCase();
-    onGuess(guessedLetter);
+    onGuess(letter);
     
     const btn = document.getElementById(`key-${letter}`);
     if (btn) {
@@ -19,21 +15,11 @@ const Keyboard = ({ onGuess, guessed, wrong, disabled, language }) => {
     }
   };
 
-  // Normalize guessed and wrong letters for comparison
-  const normalizeForComparison = (letter) => 
-    language === 'tr' 
-      ? letter.toLocaleUpperCase('tr-TR') 
-      : letter.toUpperCase();
-
-  const normalizedGuessed = guessed.map(normalizeForComparison);
-  const normalizedWrong = wrong.map(normalizeForComparison);
-
   return (
     <div className="grid grid-cols-7 sm:grid-cols-9 gap-2 p-4 bg-gray-100 rounded-xl shadow-inner">
       {letters.map((letter) => {
-        const normalizedLetter = normalizeForComparison(letter);
-        const isGuessed = normalizedGuessed.includes(normalizedLetter);
-        const isWrong = normalizedWrong.includes(normalizedLetter);
+        const isGuessed = guessed.includes(letter);
+        const isWrong = wrong.includes(letter);
         let btnClass = "key-btn";
         
         if (isGuessed) btnClass += " bg-green-500 text-white shadow-green";
@@ -55,4 +41,4 @@ const Keyboard = ({ onGuess, guessed, wrong, disabled, language }) => {
     </div>
   );
 };
-export default Keyboard;    
+export default Keyboard;
