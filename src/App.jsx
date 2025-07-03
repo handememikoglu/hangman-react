@@ -12,7 +12,7 @@ function App() {
   const [word, setWord] = useState('');
   const [guessedLetters, setGuessedLetters] = useState([]);
   const [wrongGuesses, setWrongGuesses] = useState([]);
-  const [gameStatus, setGameStatus] = useState('playing'); // 'playing', 'won', 'lost'
+  const [gameStatus, setGameStatus] = useState('playing'); 
   const maxAttempts = 6;
 
   useEffect(() => {
@@ -20,53 +20,39 @@ function App() {
   }, [language]);
 
   const startNewGame = () => {
-  const wordList = language === 'tr' ? wordsTR : wordsEN;
-  const randomWord = wordList[Math.floor(Math.random() * wordList.length)];
-  
-  setWord(randomWord.trim().toUpperCase());
-
-  setGuessedLetters([]);
-  setWrongGuesses([]);
-  setGameStatus('playing');
-};
-
-
-const handleGuess = (letter) => {
-  const guessedLetter = language === 'tr' 
-    ? letter.toLocaleUpperCase('tr-TR') 
-    : letter.toUpperCase();
-
-  if (
-    gameStatus !== 'playing' ||
-    guessedLetters.includes(guessedLetter) ||
-    wrongGuesses.includes(guessedLetter)
-  ) {
-    return;
-  }
-
-  // Word zaten büyük harf olduğu için direkt karşılaştırma yapabiliriz
-  if (word.includes(guessedLetter)) {
-    const newGuessedLetters = [...guessedLetters, guessedLetter];
-    setGuessedLetters(newGuessedLetters);
-
-    // Tüm harfler tahmin edildi mi kontrolü
-    const allLettersGuessed = word.split('').every(l => 
-      newGuessedLetters.includes(l)
-    );
+    const wordList = language === 'tr' ? wordsTR : wordsEN;
+    const randomWord = wordList[Math.floor(Math.random() * wordList.length)];
     
-    if (allLettersGuessed) {
-      setGameStatus('won');
-    }
-  } else {
-    const newWrongGuesses = [...wrongGuesses, guessedLetter];
-    setWrongGuesses(newWrongGuesses);
+    setWord(randomWord);
 
-    if (newWrongGuesses.length >= maxAttempts) {
-      setGameStatus('lost');
-    }
-  }
-};
+    setGuessedLetters([]);
+    setWrongGuesses([]);
+    setGameStatus('playing');
+  };
 
+  const handleGuess = (letter) => {
+    if (gameStatus !== 'playing' || guessedLetters.includes(letter) || wrongGuesses.includes(letter)) {
+      return;
+    }
+
+    if (word.includes(letter)) {
+      const newGuessedLetters = [...guessedLetters, letter];
+      setGuessedLetters(newGuessedLetters);
+      
+      if (word.split('').every(l => newGuessedLetters.includes(l))) {
+        setGameStatus('won');
+      }
+    } else {
+      const newWrongGuesses = [...wrongGuesses, letter];
+      setWrongGuesses(newWrongGuesses);
+      
+      if (newWrongGuesses.length >= maxAttempts) {
+        setGameStatus('lost');
+      }
+    }
+  };
+
+  const remainingAttempts = maxAttempts - wrongGuesses.length;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-purple-50 flex flex-col items-center gap-6 p-6">
@@ -101,6 +87,12 @@ const handleGuess = (letter) => {
               disabled={gameStatus !== 'playing'}
               language={language}
             />
+
+            <div className="text-center mb-4 text-lg font-semibold text-gray-700">
+              {language === 'tr'
+                ? `Kalan Hak: ${remainingAttempts}`
+                : `Remaining Attempts: ${remainingAttempts}`}
+            </div>
 
             <div className="bg-red-50 p-4 rounded-lg">
               <h3 className="font-medium text-red-600 mb-2">
