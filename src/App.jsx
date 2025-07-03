@@ -24,16 +24,22 @@ function App() {
   },[language]);
 
   const handleGuess = (letter) => {
-    if (isGameOver || isWin) return;
-    if (guessedLetters.includes(letter) || wrongGuesses.includes(letter)){
-      return;
-    }
-    if(word.includes(letter)) {
-      setGuessedLetters([...guessedLetters, letter]);
-    }else {
-      setWrongGuesses([...wrongGuesses, letter]);
-    }
-  };
+  const isGameOver = wrongGuesses.length >= maxAttempts;
+  const isWin = word.split('').every(l => guessedLetters.includes(l));
+
+  if (isGameOver || isWin) return;
+
+  if (guessedLetters.includes(letter) || wrongGuesses.includes(letter)) {
+    return;
+  }
+
+  if (word.includes(letter)) {
+    setGuessedLetters([...guessedLetters, letter]);
+  } else {
+    setWrongGuesses([...wrongGuesses, letter]);
+  }
+};
+
 
   const restartGame = () => {
   const wordList = language === 'tr' ? wordsTR : wordsEN;
@@ -51,7 +57,7 @@ function App() {
       <LanguageSelector language={language} setLanguage={setLanguage}/>
       <h1 className='text-2xl font-bold'>Adam Asmaca</h1>
       <WordDisplay word={word} guessedLetters={guessedLetters} />
-      <Keyboard onGuess={handleGuess} guessed={guessedLetters} wrong={wrongGuesses} disabled={isGameOver || isWin} />
+      <Keyboard onGuess={handleGuess} guessed={guessedLetters} wrong={wrongGuesses} disabled={wrongGuesses.length >= maxAttempts || word.split('').every(l => guessedLetters.includes(l))} />
       <p>Hatalı: {wrongGuesses.join(', ')}</p>
       {isGameOver && <p className="text-red-500">Kaybettin! Kelime: {word}</p>}
       {isWin && <p className="text-green-500">Tebrikler! Bildin 🎉</p>}
