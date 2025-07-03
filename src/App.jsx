@@ -4,8 +4,8 @@ import { wordsTR } from './data/words-tr';
 import { wordsEN } from './data/words-en';
 import LanguageSelector from './components/LanguageSelector';
 import WordDisplay from './components/WordDisplay';
-import Keyboard from './components/Keyboard';
 import HangmanCanvas from './components/HangmanCanvas';
+import Keyboard from './components/Keyboard';
 
 function App() {
   const [language, setLanguage] = useState('tr');
@@ -20,13 +20,20 @@ function App() {
   }, [language]);
 
   const startNewGame = () => {
-    const wordList = language === 'tr' ? wordsTR : wordsEN;
-    const randomWord = wordList[Math.floor(Math.random() * wordList.length)];
-    setWord(randomWord.toLowerCase());
-    setGuessedLetters([]);
-    setWrongGuesses([]);
-    setGameStatus('playing');
-  };
+  const wordList = language === 'tr' ? wordsTR : wordsEN;
+  const randomWord = wordList[Math.floor(Math.random() * wordList.length)];
+  
+  setWord(
+    language === 'tr'
+      ? randomWord.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('tr')
+      : randomWord.toLowerCase()
+  );
+
+  setGuessedLetters([]);
+  setWrongGuesses([]);
+  setGameStatus('playing');
+};
+
 
   const handleGuess = (letter) => {
     if (gameStatus !== 'playing' || guessedLetters.includes(letter) || wrongGuesses.includes(letter)) {
@@ -37,7 +44,6 @@ function App() {
       const newGuessedLetters = [...guessedLetters, letter];
       setGuessedLetters(newGuessedLetters);
       
-      // Check win condition
       if (word.split('').every(l => newGuessedLetters.includes(l))) {
         setGameStatus('won');
       }
@@ -45,7 +51,6 @@ function App() {
       const newWrongGuesses = [...wrongGuesses, letter];
       setWrongGuesses(newWrongGuesses);
       
-      // Check lose condition
       if (newWrongGuesses.length >= maxAttempts) {
         setGameStatus('lost');
       }

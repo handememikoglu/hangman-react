@@ -4,8 +4,12 @@ const Keyboard = ({ onGuess, guessed, wrong, disabled, language }) => {
     : "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
   const handleClick = (letter) => {
-    onGuess(letter.toLowerCase());
-    // Butona tıklandığında animasyon efekti
+    // Convert based on language
+    const guessedLetter = language === 'tr' 
+      ? letter.toLocaleLowerCase('tr-TR') 
+      : letter.toLowerCase();
+    onGuess(guessedLetter);
+    
     const btn = document.getElementById(`key-${letter}`);
     if (btn) {
       btn.classList.add('animate-press');
@@ -15,11 +19,21 @@ const Keyboard = ({ onGuess, guessed, wrong, disabled, language }) => {
     }
   };
 
+  // Normalize guessed and wrong letters for comparison
+  const normalizeForComparison = (letter) => 
+    language === 'tr' 
+      ? letter.toLocaleUpperCase('tr-TR') 
+      : letter.toUpperCase();
+
+  const normalizedGuessed = guessed.map(normalizeForComparison);
+  const normalizedWrong = wrong.map(normalizeForComparison);
+
   return (
     <div className="grid grid-cols-7 sm:grid-cols-9 gap-2 p-4 bg-gray-100 rounded-xl shadow-inner">
       {letters.map((letter) => {
-        const isGuessed = guessed.includes(letter.toLowerCase());
-        const isWrong = wrong.includes(letter.toLowerCase());
+        const normalizedLetter = normalizeForComparison(letter);
+        const isGuessed = normalizedGuessed.includes(normalizedLetter);
+        const isWrong = normalizedWrong.includes(normalizedLetter);
         let btnClass = "key-btn";
         
         if (isGuessed) btnClass += " bg-green-500 text-white shadow-green";
@@ -41,5 +55,4 @@ const Keyboard = ({ onGuess, guessed, wrong, disabled, language }) => {
     </div>
   );
 };
-
-export default Keyboard;
+export default Keyboard;    
