@@ -6,6 +6,7 @@ import { wordsEN } from './data/words-en';
 import LanguageSelector from './components/LanguageSelector';
 import WordDisplay from './components/WordDisplay';
 import Keyboard from './components/Keyboard';
+import HangmanCanvas from './components/HangmanCanvas';
 
 function App() {
   const [language, setLanguage] = useState('tr');
@@ -23,6 +24,7 @@ function App() {
   },[language]);
 
   const handleGuess = (letter) => {
+    if (isGameOver || isWin) return;
     if (guessedLetters.includes(letter) || wrongGuesses.includes(letter)){
       return;
     }
@@ -32,6 +34,14 @@ function App() {
       setWrongGuesses([...wrongGuesses, letter]);
     }
   };
+
+  const restartGame = () => {
+  const wordList = language === 'tr' ? wordsTR : wordsEN;
+  const randomWord = wordList[Math.floor(Math.random() * wordList.length)];
+  setWord(randomWord.toLowerCase());
+  setGuessedLetters([]);
+  setWrongGuesses([]);
+};
 
   const isGameOver = wrongGuesses.lenght >= maxAttempts;
   const isWin = word.split('').every(l => guessedLetters.includes(l));
@@ -45,7 +55,8 @@ function App() {
       <p>Hatalı: {wrongGuesses.join(', ')}</p>
       {isGameOver && <p className="text-red-500">Kaybettin! Kelime: {word}</p>}
       {isWin && <p className="text-green-500">Tebrikler! Bildin 🎉</p>}
-      <button onClick={() => setLanguage(prev => prev)} className="mt-4 bg-blue-500 text-white px-4 py-2 rounded">
+      <HangmanCanvas wrongGuessCount={wrongGuesses.length} />
+      <button onClick={restartGame} className="mt-4 bg-blue-500 text-white px-4 py-2 rounded">
         Yeni Oyun
       </button>
     </div>
